@@ -179,178 +179,183 @@ class MyInvestmentAnalysis:
         # 整理masterData，保留利润有意义的部分四级分类：
         # '可转债基金','A股-大股票指数'，'A股-小股票指数','A股-主题指数','成熟市场指数','主动股票基金',
         profit_list = ['可转债基金', 'A股-大股票指数', 'A股-小股票指数',
-                      'A股-主题指数', '成熟市场指数', '主动股票基金']
-        profitMasterData = master_data.iloc[:, 0:5]
-        profitMasterData = profitMasterData.drop_duplicates()
+                       'A股-主题指数', '成熟市场指数', '主动股票基金']
+        profit_master_data = master_data.iloc[:, 0:5]
+        profit_master_data = profit_master_data.drop_duplicates()
 
-        profitMasterData = profitMasterData.loc[master_data['四级分类'].isin(profit_list)]
+        profit_master_data = profit_master_data.loc[master_data['四级分类'].isin(profit_list)]
 
-        target_df = profitMasterData
-        periodList = all_category_balance.loc[:, '期间'].drop_duplicates().tolist()
-        profitMasterData.insert(0, '期间', np.nan)
+        target_df = profit_master_data
+        period_list = all_category_balance.loc[:, '期间'].drop_duplicates().tolist()
+        profit_master_data.insert(0, '期间', np.nan)
 
         # 补全期间
-        for tempPeriod in periodList:
-            profitDF = profitMasterData.fillna(tempPeriod)
-            profitMasterData = pd.concat([profitDF, target_df], axis=0)
+        for tempPeriod in period_list:
+            profit_df = profit_master_data.fillna(tempPeriod)
+            profit_master_data = pd.concat([profit_df, target_df], axis=0)
 
-        profitMasterData.dropna(inplace=True)
+        profit_master_data.dropna(inplace=True)
 
         # 填入对应的期初期末金额
-        periodCategory_sum = all_category_balance.groupby(['期间', '四级分类']).sum()
+        period_category_sum = all_category_balance.groupby(['期间', '四级分类']).sum()
 
         # 填入期初，期末金额
-        profitMasterData.insert(len(profitMasterData.columns), '期末金额', np.nan)
-        profitMasterData.insert(len(profitMasterData.columns) - 1, '期初金额', np.nan)
+        profit_master_data.insert(len(profit_master_data.columns), '期末金额', np.nan)
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '期初金额', np.nan)
 
-        currentPeroid = np.nan
-        previousPeriod = np.nan
-        firstTime = True
-        for index, row in periodCategory_sum.iterrows():
-            if firstTime == True:
-                currentPeroid = index[0]
-                firstTime = False
-            profitMasterData.loc[(profitMasterData['期间'] == index[0]) &
-                                 (profitMasterData['四级分类'] == index[1]), '期末金额'] = row['金额']
+        current_period = np.nan
+        previous_period = np.nan
+        first_time = True
+        for index, row in period_category_sum.iterrows():
+            if first_time:
+                current_period = index[0]
+                first_time = False
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['四级分类'] == index[1]), '期末金额'] = row['金额']
 
-            if currentPeroid != index[0]:
-                previousPeriod = currentPeroid
-                currentPeroid = index[0]
-            profitMasterData.loc[(profitMasterData['期间'] == index[0]) &
-                                 (profitMasterData['四级分类'] == index[1]), '期初金额'] = profitMasterData.loc[
-                (profitMasterData['期间'] == previousPeriod) &
-                (profitMasterData['四级分类'] == index[1]), '期末金额']
+            if current_period != index[0]:
+                previous_period = current_period
+                current_period = index[0]
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['四级分类'] == index[1]), '期初金额'] = profit_master_data.loc[
+                (profit_master_data['期间'] == previous_period) &
+                (profit_master_data['四级分类'] == index[1]), '期末金额']
 
         # 填入本期变动
-        profitMasterData.insert(len(profitMasterData.columns) - 1, '本期变动', np.nan)
-        periodCategory_change_sum = all_category_transcation.groupby(['期间', '四级分类']).sum()
-        for index, row in periodCategory_change_sum.iterrows():
-            profitMasterData.loc[(profitMasterData['期间'] == index[0]) &
-                                 (profitMasterData['四级分类'] == index[1]), '本期变动'] = row['买入／卖出金额']
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '本期变动', np.nan)
+        period_category_change_sum = all_category_transcation.groupby(['期间', '四级分类']).sum()
+        for index, row in period_category_change_sum.iterrows():
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['四级分类'] == index[1]), '本期变动'] = row['买入／卖出金额']
 
-        profitMasterData.fillna(0, inplace=True)
+        profit_master_data.fillna(0, inplace=True)
 
         # 计算利润及利润率
-        profitMasterData.insert(len(profitMasterData.columns), '本期利润',
-                                (profitMasterData.loc[:, '期末金额'] - profitMasterData.loc[:, '期初金额'] -
-                                 profitMasterData.loc[:, '本期变动']))
-        profitMasterData.insert(len(profitMasterData.columns), '利润率',
-                                (profitMasterData.loc[:, '本期利润'] / profitMasterData.loc[:, '期初金额']))
+        profit_master_data.insert(len(profit_master_data.columns), '本期利润',
+                                  (profit_master_data.loc[:, '期末金额'] - profit_master_data.loc[:, '期初金额'] -
+                                   profit_master_data.loc[:, '本期变动']))
+        profit_master_data.insert(len(profit_master_data.columns), '利润率',
+                                  (profit_master_data.loc[:, '本期利润'] / profit_master_data.loc[:, '期初金额']))
 
         # 最终整理数据并返回
-        profitMasterData.reset_index(inplace=True, drop=True)
-        profitDF = profitMasterData
-        return profitDF
+        profit_master_data.reset_index(inplace=True, drop=True)
+        profit_df = profit_master_data
+        return profit_df
 
     # 分类利润率曲线: 第二个参数：1-一级分类；2-二级分类；3-三级分类；4-四级分类；5-辅助分类; 0-总额（默认）
-    def lineProfitByCategory(self, buildProfitDF, categoryType=0):
-        if categoryType == 1:
-            profitByCategory = buildProfitDF.groupby(['期间', '一级分类']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
-            profitByCategory = profitByCategory.unstack()
+    @staticmethod
+    def line_profit_by_category(build_profit_df, category_type=0):
+        if category_type == 1:
+            profit_by_category = build_profit_df.groupby(['期间', '一级分类']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
+            profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
-            plt.legend(profitByCategory.columns)
+            plt.plot(profit_by_category, marker='o')
+            plt.legend(profit_by_category.columns)
             plt.title('一级分类利润率曲线')
             plt.show()
-        elif categoryType == 2:
-            profitByCategory = buildProfitDF.groupby(['期间', '二级分类']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
-            profitByCategory = profitByCategory.unstack()
+        elif category_type == 2:
+            profit_by_category = build_profit_df.groupby(['期间', '二级分类']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
+            profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
-            plt.legend(profitByCategory.columns)
+            plt.plot(profit_by_category, marker='o')
+            plt.legend(profit_by_category.columns)
             plt.title('二级分类利润率曲线')
             plt.show()
-        elif categoryType == 3:
-            profitByCategory = buildProfitDF.groupby(['期间', '三级分类']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
-            profitByCategory = profitByCategory.unstack()
+        elif category_type == 3:
+            profit_by_category = build_profit_df.groupby(['期间', '三级分类']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
+            profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
-            plt.legend(profitByCategory.columns)
+            plt.plot(profit_by_category, marker='o')
+            plt.legend(profit_by_category.columns)
             plt.title('三级分类利润率曲线')
             plt.show()
-        elif categoryType == 4:
-            profitByCategory = buildProfitDF.groupby(['期间', '四级分类']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
-            profitByCategory = profitByCategory.unstack()
+        elif category_type == 4:
+            profit_by_category = build_profit_df.groupby(['期间', '四级分类']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
+            profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
-            plt.legend(profitByCategory.columns)
+            plt.plot(profit_by_category, marker='o')
+            plt.legend(profit_by_category.columns)
             plt.title('四级分类利润率曲线')
             plt.show()
-        elif categoryType == 5:
-            profitByCategory = buildProfitDF.groupby(['期间', '辅助分类']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
-            profitByCategory = profitByCategory.unstack()
+        elif category_type == 5:
+            profit_by_category = build_profit_df.groupby(['期间', '辅助分类']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
+            profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
-            plt.legend(profitByCategory.columns)
+            plt.plot(profit_by_category, marker='o')
+            plt.legend(profit_by_category.columns)
             plt.title('辅助分类利润率曲线')
             plt.show()
         else:
-            profitByCategory = buildProfitDF.groupby(['期间']).sum()
-            profitByCategory.loc[:, '利润率'] = profitByCategory.loc[:, '本期利润'] / profitByCategory.loc[:, '期初金额']
-            profitByCategory = profitByCategory['利润率']
+            profit_by_category = build_profit_df.groupby(['期间']).sum()
+            profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
+            profit_by_category = profit_by_category['利润率']
 
             fig = plt.figure()
             ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(profitByCategory, marker='o')
+            plt.plot(profit_by_category, marker='o')
             plt.title('总金额利润率曲线')
             plt.show()
 
             # 返回选定的项目名称按期间余额
 
-    def buildInvestmentItemDF(self, allCategory_balance, investmentItemList):
-        investmentItemDF = allCategory_balance.loc[allCategory_balance.loc[:, '项目名称'].isin(investmentItemList)]
-        investmentItemDF.reset_index(inplace=True, drop=True)
-        return investmentItemDF
+    @staticmethod
+    def build_investment_item_df(all_category_balance, investment_item_list):
+        investment_item_df = all_category_balance.loc[all_category_balance.loc[:, '项目名称'].isin(investment_item_list)]
+        investment_item_df.reset_index(inplace=True, drop=True)
+        return investment_item_df
 
     # 打印选定投资项目范围饼状图
-    def pieByGivenInvestmentItem(self, investmentItemDF):
-        lastPeriodInvestmentItemDF = investmentItemDF.loc[investmentItemDF.loc[:, '期间']
-                                                          == investmentItemDF.iloc[-1].loc['期间']].loc[:, ['项目名称', '金额']]
-        lastPeriodInvestmentItemDF.set_index('项目名称', inplace=True)
-        lastPeriodInvestmentItemDF.fillna(0)
+    @staticmethod
+    def pie_by_given_investment_item(investment_item_df):
+        last_period_investment_item_df = \
+            investment_item_df.loc[investment_item_df.loc[:, '期间']
+                                   == investment_item_df.iloc[-1].loc['期间']].loc[:, ['项目名称', '金额']]
+        last_period_investment_item_df.set_index('项目名称', inplace=True)
+        last_period_investment_item_df.fillna(0)
 
         fig = plt.figure(figsize=(15, 15))
-        plt.title('选定投资项目饼状图 - 选定总金额：' + str(lastPeriodInvestmentItemDF['金额'].sum()))
-        plt.pie(lastPeriodInvestmentItemDF,
-                labels=lastPeriodInvestmentItemDF.index,
+        plt.title('选定投资项目饼状图 - 选定总金额：' + str(last_period_investment_item_df['金额'].sum()))
+        plt.pie(last_period_investment_item_df,
+                labels=last_period_investment_item_df.index,
                 startangle=90,
                 shadow=False,
                 autopct='%1.1f%%')
 
-        ##计算比例并添加到DF中
-        amountSum = lastPeriodInvestmentItemDF['金额'].sum()
-        lastPeriodInvestmentItemDF.insert(len(lastPeriodInvestmentItemDF.columns), '占比',
-                                          lastPeriodInvestmentItemDF.loc[:, '金额'] / amountSum)
+        # 计算比例并添加到DF中
+        amount_sum = last_period_investment_item_df['金额'].sum()
+        last_period_investment_item_df.insert(len(last_period_investment_item_df.columns), '占比',
+                                              last_period_investment_item_df.loc[:, '金额'] / amount_sum)
 
-        lastPeriodInvestmentItemDF['占比'] = lastPeriodInvestmentItemDF['占比'].apply(lambda x: format(x, '.2%'))
+        last_period_investment_item_df['占比'] = last_period_investment_item_df['占比'].apply(lambda x: format(x, '.2%'))
 
-        lastPeriodInvestmentItemDF = lastPeriodInvestmentItemDF.sort_values('占比')
-        return lastPeriodInvestmentItemDF
+        last_period_investment_item_df = last_period_investment_item_df.sort_values('占比')
+        return last_period_investment_item_df
 
     # 打印自给定日期起至当前的指数增长率
-    def analyzeProfit(self, profit_calculate_stock_dict, start_date, end_date):
+    @staticmethod
+    def analyze_profit(profit_calculate_stock_dict, start_date, end_date):
         # 构建结果df
-        df = pd.DataFrame(index=profit_calculate_stock_dict.keys(), columns=[start_date, end_date, "Incresment Ratio"])
+        df = pd.DataFrame(index=profit_calculate_stock_dict.keys(), columns=[start_date, end_date, "Increment Ratio"])
         for index, row in df.iterrows():
             row[start_date] = \
                 jq.get_price(profit_calculate_stock_dict[index], count=1, end_date=start_date, frequency='daily',
