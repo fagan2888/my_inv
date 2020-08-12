@@ -335,7 +335,8 @@ class MyInvestmentAnalysis:
 
         fig = plt.figure(figsize=(15, 15))
         plt.title('选定投资项目饼状图 - 选定总金额：' + str(last_period_investment_item_df['金额'].sum()))
-        plt.pie(last_period_investment_item_df,
+        target_list = last_period_investment_item_df.values
+        plt.pie(target_list,
                 labels=last_period_investment_item_df.index,
                 startangle=90,
                 shadow=False,
