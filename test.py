@@ -1,9 +1,22 @@
-class TestClass:
-    @staticmethod
-    def p_string(p_str):
-        print(p_str)
+import jqdatasdk as jq
+import pandas as pd
+import numpy as np
+from datetime import datetime, time
 
 
-tc = TestClass()
-tc.p_string('hahahah')
-TestClass.p_string('afdaeafaf')
+# jq.auth('18500150123', 'YanTeng881128')
+#
+# result = jq.get_all_securities(types=['index'], date=None)
+# print(result)
+
+def get_timestamp_from_format_time(format_time):
+    struct_time = time.strptime(format_time, '%Y-%m-%d')
+    return time.mktime(struct_time)
+
+
+df = pd.read_excel('./res/sp500_index_price_pe.xlsx', index_col=0)
+
+result = df.index[0]
+result = get_timestamp_from_format_time(result)
+print(result_str == '1900-01-01')
+pass
