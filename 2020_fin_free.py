@@ -16,9 +16,9 @@ current_stock_value = 680 * 10000  # 当前的股票市值
 current_cash = 180 * 10000  # 当前现金
 current_shanghai_point = 3300  # 当前上证大盘指数
 final_value = 1600 * 10000  # 最终总金额目标
-low_risk_investment_return_ratio = 0.08
-y1 = 1.5  # 第一阶段年限
-y2 = 1.5  # 第二阶段年限
+low_risk_investment_return_ratio = 0.1
+y1 = 18 / 12  # 第一阶段年限
+y2 = 18 / 12  # 第二阶段年限
 
 # end of setting params
 

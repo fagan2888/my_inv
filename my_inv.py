@@ -1,14 +1,23 @@
+# coding:utf-8
+
 # 我的资产分析类定义
 import jqdatasdk as jq
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas import DataFrame
+import matplotlib.dates as mdates
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
+
+mpl.use('TkAgg')
 
 
 class MyInvestmentAnalysis:
     def __init__(self):
-        jq.auth('18500150123', 'YanTeng881128')
+        # jq.auth('18500150123', 'YanTeng881128')
+        mpl.rcParams[u'font.sans-serif'] = ['SimHei']
+        mpl.rcParams['axes.unicode_minus'] = False
 
     @staticmethod
     def read_data(excel_path):
@@ -40,11 +49,17 @@ class MyInvestmentAnalysis:
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
-            plt.plot(group_by_period, marker='o')
-            plt.legend(group_by_period.columns)
-            plt.title('一级分类资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+
+            group_by_period.plot(marker='o', title='一级分类资产总额曲线', ax=ax)
+
+            # fig = plt.figure()
+            # ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+            # plt.plot(group_by_period, marker='o')
+            # plt.legend(group_by_period.columns)
+            # plt.title('一级分类资产总额曲线')
             plt.show()
         elif category_type == 2:
             group_by_period = all_category_balance.groupby(['期间', '二级分类']).sum()
@@ -52,7 +67,7 @@ class MyInvestmentAnalysis:
             group_by_period.columns = group_by_period.columns.levels[1]
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(group_by_period, marker='o')
             plt.legend(group_by_period.columns)
             plt.title('二级分类资产总额曲线')
@@ -63,7 +78,7 @@ class MyInvestmentAnalysis:
             group_by_period.columns = group_by_period.columns.levels[1]
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(group_by_period, marker='o')
             plt.legend(group_by_period.columns)
             plt.title('三级分类资产总额曲线')
@@ -74,7 +89,7 @@ class MyInvestmentAnalysis:
             group_by_period.columns = group_by_period.columns.levels[1]
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(group_by_period, marker='o')
             plt.legend(group_by_period.columns)
             plt.title('四级分类资产总额曲线')
@@ -85,7 +100,7 @@ class MyInvestmentAnalysis:
             group_by_period.columns = group_by_period.columns.levels[1]
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(group_by_period, marker='o')
             plt.legend(group_by_period.columns)
             plt.title('辅助分类资产总额曲线')
@@ -95,7 +110,7 @@ class MyInvestmentAnalysis:
             df_group_by_period_sum = DataFrame(group_by_period['金额'].sum())
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(df_group_by_period_sum, marker='o')
             plt.legend(df_group_by_period_sum.columns)
             plt.title('资产总额曲线')
@@ -252,7 +267,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.legend(profit_by_category.columns)
             plt.title('一级分类利润率曲线')
@@ -264,7 +279,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.legend(profit_by_category.columns)
             plt.title('二级分类利润率曲线')
@@ -276,7 +291,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.legend(profit_by_category.columns)
             plt.title('三级分类利润率曲线')
@@ -288,7 +303,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.legend(profit_by_category.columns)
             plt.title('四级分类利润率曲线')
@@ -300,7 +315,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category.unstack()
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.legend(profit_by_category.columns)
             plt.title('辅助分类利润率曲线')
@@ -311,7 +326,7 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
 
             fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 2, 1])
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
             plt.plot(profit_by_category, marker='o')
             plt.title('总金额利润率曲线')
             plt.show()
@@ -334,13 +349,13 @@ class MyInvestmentAnalysis:
         last_period_investment_item_df.fillna(0)
 
         fig = plt.figure(figsize=(15, 15))
-        plt.title('选定投资项目饼状图 - 选定总金额：' + str(last_period_investment_item_df['金额'].sum()))
-        target_list = last_period_investment_item_df.values
-        plt.pie(target_list,
+        plt.title(u'选定投资项目饼状图 - 选定总金额：' + str(last_period_investment_item_df['金额'].sum()))
+        plt.pie(last_period_investment_item_df['金额'],
                 labels=last_period_investment_item_df.index,
                 startangle=90,
                 shadow=False,
                 autopct='%1.1f%%')
+        plt.show()
 
         # 计算比例并添加到DF中
         amount_sum = last_period_investment_item_df['金额'].sum()
