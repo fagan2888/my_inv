@@ -62,10 +62,10 @@ print("贷款房子月供：" + str(m_payment) + "；多出来的月度投资收
 # 未来加拿大生活年度总收益
 total_annual_income = (investment_surplus + 1000 * 10000) * low_risk_investment_return_ratio
 
-cpi_reduse_value = (investment_surplus + 1000 * 10000) * 0.03
+cpi_reduce_value = (investment_surplus + 1000 * 10000) * 0.03
 
-total_annual_living_cost_available = total_annual_income - car_monthly_cost * 12 - house_other_cost_monthly * 12\
-                                     - m_payment * 12 - cpi_reduse_value
+total_annual_living_cost_available = total_annual_income - car_monthly_cost * 12 - house_other_cost_monthly * 12 \
+                                     - m_payment * 12 - cpi_reduce_value
 
 print("未来在加拿大年度可以支付的生活花销：" + str(total_annual_living_cost_available))
 

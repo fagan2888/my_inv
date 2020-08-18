@@ -1,7 +1,6 @@
-import jqdatasdk as jq
+import time
+
 import pandas as pd
-import numpy as np
-from datetime import datetime, time
 
 
 # jq.auth('18500150123', 'YanTeng881128')
@@ -18,5 +17,5 @@ df = pd.read_excel('./res/sp500_index_price_pe.xlsx', index_col=0)
 
 result = df.index[0]
 result = get_timestamp_from_format_time(result)
-print(result_str == '1900-01-01')
+print(result == datatime('1900-01-01'))
 pass
