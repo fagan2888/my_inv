@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-from datetime import timedelta, date
-from io import BytesIO
-
-import datetime
-import os
-import pandas as pd
-import requests
-import time
 from jqdatasdk import *
-from numpy import sqrt, mean, NaN
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import bisect, requests, os, sys, json, csv, base64, codecs, xlrd, time, datetime
+from datetime import timedelta, date
 from scipy.stats import mstats
+from io import StringIO, BytesIO
+from numpy import sqrt, mean, median, std, NaN
 
 
 class Dividend(object):
     # 计算股息率
-    def __init__(self, statsDate=None):
-        if statsDate is None:
-            statsDate = datetime.date.today()
-        self.statsDate = statsDate
+    def __init__(self, start_date=None):
+        if start_date is None:
+            start_date = datetime.date.today()
+        self.stats_date = start_date
         self.df_div = self.calc_dividend()
 
     def calc_dividend(self, code_list=[]):
@@ -52,7 +50,7 @@ class Dividend(object):
         # 计算指定code_list中的股息率
         secu_category = [1]  # 证券类别:1-A股，SecuMain表中的字段
         code_list = list(map(lambda item: item[0:6], code_list))  # 格式化股票代码
-        incode = finance.run_query(query(
+        incode = jy.run_query(query(
             jy.SecuMain.SecuCode,
             jy.SecuMain.InnerCode,
         ).filter(
@@ -60,8 +58,8 @@ class Dividend(object):
             jy.SecuMain.SecuCode.in_(code_list)
         ))
 
-        start_date = self.statsDate - datetime.timedelta(365 * 2)
-        end_date = self.statsDate - datetime.timedelta(1)
+        start_date = self.stats_date - datetime.timedelta(365 * 2)
+        end_date = self.stats_date - datetime.timedelta(1)
 
         q = query(
             jy.LC_Dividend.InnerCode,  # 证券内部编码
@@ -102,7 +100,7 @@ class Dividend(object):
 
     def get_idx_dividend(self, idx):
         # 获取指数的股息率
-        code_list = get_idx_components(idx, self.statsDate)
+        code_list = get_idx_components(idx, self.stats_date)
         df_idx = self.df_div[self.df_div.index.isin(code_list)]
         idx_div = df_idx[u'分红金额'].sum() / (df_idx[u'市值'].sum() * 1e8) * 100
         return idx_div
@@ -130,7 +128,7 @@ def get_hist(code, begin='', end='', days=0, timeout=5):
     # code: sh000300, begin/end: 20160901, days: 指定最近天数
     # http://xueqiu.com/S/SH000902/historical.csv
     if len(begin) > 0 and days > 0:  # !!!不能同时指定begin和days!!!
-        print('begin: %s, days: %d', begin, days)
+        log.error('begin: %s, days: %d', begin, days)
         return None
     url = 'https://xueqiu.com/stock/forchartk/stocklist.json?symbol=%s&period=1day&type=normal' % (code)
     if len(begin) > 0:
@@ -508,7 +506,7 @@ def calc_idx_state(idx, pe, pe_ratio, pb, pb_ratio):
     return [score, calc_state(score)]
 
 
-def update_hs_data(idx_dict, data_root='./'):
+def update_hs_data(idx_dict, data_root='./data'):
     index_list = list(idx_dict.keys())
     data_path = '%s%s_pe_pb.csv' % (data_root, convert_code(index_list[0]))
     if os.path.exists(data_path):  # 增量更新,只判断列表中第一个
@@ -566,5 +564,6 @@ idx_dict = {
     '399975.XSHE': ['512880', '-'],  # 证券公司
 }
 
+auth('18500150123', 'YanTeng881128')
 update_hs_data(idx_dict)
 (value_df, fund_df) = idx_analysis(idx_dict)

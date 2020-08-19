@@ -19,27 +19,42 @@ class MyInvestmentAnalysis:
         mpl.rcParams[u'font.sans-serif'] = ['SimHei']
         mpl.rcParams['axes.unicode_minus'] = False
 
-    @staticmethod
-    def read_data(excel_path):
+        self.balance_raw_data = DataFrame()
+        self.transaction_raw_data = DataFrame()
+        self.master_raw_data = DataFrame()
+
+        self.all_category_balance = DataFrame()
+        self.all_category_transaction = DataFrame()
+        self.master_data = DataFrame()
+
+    def data_preparation(self, excel_path):
+        self.__read_data(excel_path)
+        self.__data_trim()
+
+    def __read_data(self, excel_path):
         balance_raw_data = pd.read_excel(excel_path, sheet_name='月度资产明细')
         transaction_raw_data = pd.read_excel(excel_path, sheet_name='交易明细（不包括固定收益）')
         master_raw_data = pd.read_excel(excel_path, sheet_name='主数据')
-        return balance_raw_data, transaction_raw_data, master_raw_data
+        self.balance_raw_data = balance_raw_data
+        self.transaction_raw_data = transaction_raw_data
+        self.master_raw_data = master_raw_data
 
-    @staticmethod
-    def data_trim(balance_raw_data, transaction_raw_data, master_raw_data):
+    def __data_trim(self):
         # 数据清理 - 保留所有分类，只显示总额
-        all_category_balance = balance_raw_data.loc[:, '期间':'项目名称']
-        all_category_balance.insert(8, '金额', balance_raw_data.iloc[:, -1])
+        all_category_balance = self.balance_raw_data.loc[:, '期间':'项目名称']
+        all_category_balance.insert(8, '金额', self.balance_raw_data.iloc[:, -1])
 
         # 数据清理 - 保留交易信息
-        all_category_transaction = transaction_raw_data
+        all_category_transaction = self.transaction_raw_data
 
         # 数据清理 - 只保留主数据部分
-        master_data = master_raw_data.iloc[:, 0:6]
+        master_data = self.master_raw_data.iloc[:, 0:6]
         master_data.rename(columns=master_data.iloc[0], inplace=True)
         master_data.drop(0, inplace=True)
-        return all_category_balance, all_category_transaction, master_data
+
+        self.all_category_balance = all_category_balance
+        self.all_category_transaction = all_category_transaction
+        self.master_data = master_data
 
     # 资产总额曲线: 第二个参数：1-一级分类；2-二级分类；3-三级分类；4-四级分类；5-辅助分类; 0-总额（默认）
     @staticmethod
@@ -151,19 +166,18 @@ class MyInvestmentAnalysis:
             plt.show()
 
     # 建立利润计算DF - 每次都重新计算
-    @staticmethod
-    def build_profit_df(all_category_balance, all_category_transcation, master_data):
+    def build_profit_df(self):
         # 整理masterData，保留利润有意义的部分四级分类：
         # '可转债基金','A股-大股票指数'，'A股-小股票指数','A股-主题指数','成熟市场指数','主动股票基金',
         profit_list = ['可转债基金', 'A股-大股票指数', 'A股-小股票指数',
                        'A股-主题指数', '成熟市场指数', '主动股票基金']
-        profit_master_data = master_data.iloc[:, 0:5]
+        profit_master_data = self.master_data.iloc[:, 0:5]
         profit_master_data = profit_master_data.drop_duplicates()
 
-        profit_master_data = profit_master_data.loc[master_data['四级分类'].isin(profit_list)]
+        profit_master_data = profit_master_data.loc[self.master_data['四级分类'].isin(profit_list)]
 
         target_df = profit_master_data
-        period_list = all_category_balance.loc[:, '期间'].drop_duplicates().tolist()
+        period_list = self.all_category_balance.loc[:, '期间'].drop_duplicates().tolist()
         profit_master_data.insert(0, '期间', np.nan)
 
         # 补全期间
@@ -174,7 +188,7 @@ class MyInvestmentAnalysis:
         profit_master_data.dropna(inplace=True)
 
         # 填入对应的期初期末金额
-        period_category_sum = all_category_balance.groupby(['期间', '四级分类']).sum()
+        period_category_sum = self.all_category_balance.groupby(['期间', '四级分类']).sum()
 
         # 填入期初，期末金额
         profit_master_data.insert(len(profit_master_data.columns), '期末金额', np.nan)
@@ -200,7 +214,7 @@ class MyInvestmentAnalysis:
 
         # 填入本期变动
         profit_master_data.insert(len(profit_master_data.columns) - 1, '本期变动', np.nan)
-        period_category_change_sum = all_category_transcation.groupby(['期间', '四级分类']).sum()
+        period_category_change_sum = self.all_category_transaction.groupby(['期间', '四级分类']).sum()
         for index, row in period_category_change_sum.iterrows():
             profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
                                    (profit_master_data['四级分类'] == index[1]), '本期变动'] = row['买入／卖出金额']
@@ -290,8 +304,12 @@ class MyInvestmentAnalysis:
 
             # 返回选定的项目名称按期间余额
 
+    # 给定期间内，投资项目利润、利润率柱状图
+    def calculate_inv_item_profit_ratio(self, all_category_balance, all_category_transaction, master_data):
+        pass
+
     @staticmethod
-    def build_investment_item_df(all_category_balance, investment_item_list):
+    def __build_investment_item_df(all_category_balance, investment_item_list):
         investment_item_df = all_category_balance.loc[all_category_balance.loc[:, '项目名称'].isin(investment_item_list)]
         investment_item_df.reset_index(inplace=True, drop=True)
         return investment_item_df
