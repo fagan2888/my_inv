@@ -45,10 +45,9 @@ df_profit = my_investment_analysis.build_profit_df(all_category_balance, all_cat
 
 # 运行我的资产report
 
-my_investment_analysis.line_by_category_total_amount(all_category_balance, 1)
-# for x in range(0, 6):
-#     my_investment_analysis.line_by_category_total_amount(all_category_balance, x)
-#     my_investment_analysis.line_profit_by_category(df_profit, x)
+for x in range(0, 6):
+    my_investment_analysis.line_by_category_total_amount(all_category_balance, x)
+    my_investment_analysis.line_profit_by_category(df_profit, x)
 
 # for x in range(1,6):
 #     myInvestmentAnalysis.pieByCategory(allCategory_balance, x)

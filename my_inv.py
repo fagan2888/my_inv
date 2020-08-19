@@ -52,68 +52,56 @@ class MyInvestmentAnalysis:
             ax = plt.gca()
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
             ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
-
             group_by_period.plot(marker='o', title='一级分类资产总额曲线', ax=ax)
-
-            # fig = plt.figure()
-            # ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            # plt.plot(group_by_period, marker='o')
-            # plt.legend(group_by_period.columns)
-            # plt.title('一级分类资产总额曲线')
             plt.show()
         elif category_type == 2:
             group_by_period = all_category_balance.groupby(['期间', '二级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(group_by_period, marker='o')
-            plt.legend(group_by_period.columns)
-            plt.title('二级分类资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+            group_by_period.plot(marker='o', title='二级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 3:
             group_by_period = all_category_balance.groupby(['期间', '三级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(group_by_period, marker='o')
-            plt.legend(group_by_period.columns)
-            plt.title('三级分类资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+            group_by_period.plot(marker='o', title='三级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 4:
             group_by_period = all_category_balance.groupby(['期间', '四级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(group_by_period, marker='o')
-            plt.legend(group_by_period.columns)
-            plt.title('四级分类资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+            group_by_period.plot(marker='o', title='四级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 5:
             group_by_period = all_category_balance.groupby(['期间', '辅助分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(group_by_period, marker='o')
-            plt.legend(group_by_period.columns)
-            plt.title('辅助分类资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+            group_by_period.plot(marker='o', title='辅助分类资产总额曲线', ax=ax)
             plt.show()
         else:
             group_by_period = all_category_balance.groupby(['期间'])
             df_group_by_period_sum = DataFrame(group_by_period['金额'].sum())
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(df_group_by_period_sum, marker='o')
-            plt.legend(df_group_by_period_sum.columns)
-            plt.title('资产总额曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.1f'))
+            df_group_by_period_sum.plot(marker='o', title='资产总额曲线', ax=ax)
             for index, row in df_group_by_period_sum.iterrows():
                 plt.text(index, row['金额'], row['金额'], ha='center', va='bottom')
             plt.show()
@@ -266,11 +254,10 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
             profit_by_category = profit_by_category.unstack()
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.legend(profit_by_category.columns)
-            plt.title('一级分类利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='一级分类利润曲线', ax=ax)
             plt.show()
         elif category_type == 2:
             profit_by_category = build_profit_df.groupby(['期间', '二级分类']).sum()
@@ -278,11 +265,10 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
             profit_by_category = profit_by_category.unstack()
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.legend(profit_by_category.columns)
-            plt.title('二级分类利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='二级分类利润曲线', ax=ax)
             plt.show()
         elif category_type == 3:
             profit_by_category = build_profit_df.groupby(['期间', '三级分类']).sum()
@@ -290,11 +276,10 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
             profit_by_category = profit_by_category.unstack()
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.legend(profit_by_category.columns)
-            plt.title('三级分类利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='三级分类利润曲线', ax=ax)
             plt.show()
         elif category_type == 4:
             profit_by_category = build_profit_df.groupby(['期间', '四级分类']).sum()
@@ -302,11 +287,10 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
             profit_by_category = profit_by_category.unstack()
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.legend(profit_by_category.columns)
-            plt.title('四级分类利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='四级分类利润曲线', ax=ax)
             plt.show()
         elif category_type == 5:
             profit_by_category = build_profit_df.groupby(['期间', '辅助分类']).sum()
@@ -314,21 +298,20 @@ class MyInvestmentAnalysis:
             profit_by_category = profit_by_category['利润率']
             profit_by_category = profit_by_category.unstack()
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.legend(profit_by_category.columns)
-            plt.title('辅助分类利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='辅助分类利润曲线', ax=ax)
             plt.show()
         else:
             profit_by_category = build_profit_df.groupby(['期间']).sum()
             profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
             profit_by_category = profit_by_category['利润率']
 
-            fig = plt.figure()
-            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-            plt.plot(profit_by_category, marker='o')
-            plt.title('总金额利润率曲线')
+            ax = plt.gca()
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%1.2f'))
+            profit_by_category.plot(marker='o', title='总金额利润率曲线', ax=ax)
             plt.show()
 
             # 返回选定的项目名称按期间余额

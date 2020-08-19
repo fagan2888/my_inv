@@ -1,9 +1,9 @@
-import matplotlib
+import pandas as pd
 import matplotlib.pyplot as plt
-matplotlib.use('TkAgg')
+import matplotlib as mpl
 
-plt.plot([1, 2, 3], [4, 5, 6])
-plt.xlabel("x value")
-plt.ylabel("y value")
-plt.title("a simple example")
+mpl.use('TkAgg')
+
+df_result = pd.read_excel("./res/sp500_index_price_pe.xlsx", index_col=[0])
+df_result.plot()
 plt.show()
