@@ -3,19 +3,19 @@
 # 我的资产分析类定义
 import jqdatasdk as jq
 import matplotlib as mpl
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import FormatStrFormatter
 from pandas import DataFrame
-import matplotlib.dates as mdates
-from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
 mpl.use('TkAgg')
 
 
 class MyInvestmentAnalysis:
     def __init__(self):
-        # jq.auth('18500150123', 'YanTeng881128')
+        jq.auth('18500150123', 'YanTeng881128')
         mpl.rcParams[u'font.sans-serif'] = ['SimHei']
         mpl.rcParams['axes.unicode_minus'] = False
 
@@ -113,68 +113,42 @@ class MyInvestmentAnalysis:
             fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '一级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
-
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
-            fig = plt.figure(figsize=(10, 10))
-            plt.title('一级分类饼状图')
-            plt.pie(result_df,
-                    labels=result_df.index,
-                    startangle=90,
-                    shadow=False,
-                    autopct='%1.1f%%')
+
+            result_df.plot(kind='pie', title='一级分类饼状图', autopct='%1.1f%%')
+            plt.show()
         elif category_type == 2:
             fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '二级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
-
-            fig = plt.figure(figsize=(10, 10))
-            plt.title('二级分类饼状图')
-            plt.pie(result_df,
-                    labels=result_df.index,
-                    startangle=90,
-                    shadow=False,
-                    autopct='%1.1f%%')
+            result_df.plot(kind='pie', title='二级分类饼状图', autopct='%1.1f%%')
+            plt.show()
         elif category_type == 3:
             fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '三级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
-            fig = plt.figure(figsize=(10, 10))
-            plt.title('三级分类饼状图')
-            plt.pie(result_df,
-                    labels=result_df.index,
-                    startangle=90,
-                    shadow=False,
-                    autopct='%1.1f%%')
+            result_df.plot(kind='pie', title='三级分类饼状图', autopct='%1.1f%%')
+            plt.show()
         elif category_type == 4:
             fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '四级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
-            fig = plt.figure(figsize=(10, 10))
-            plt.title('四级分类饼状图')
-            plt.pie(result_df,
-                    labels=result_df.index,
-                    startangle=90,
-                    shadow=False,
-                    autopct='%1.1f%%')
+            result_df.plot(kind='pie', title='四级分类饼状图', autopct='%1.1f%%')
+            plt.show()
         else:
             fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '辅助分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
-            fig = plt.figure(figsize=(10, 10))
-            plt.title('辅助分类饼状图')
-            plt.pie(result_df,
-                    labels=result_df.index,
-                    startangle=90,
-                    shadow=False,
-                    autopct='%1.1f%%')
+            result_df.plot(kind='pie', title='辅助分类饼状图', autopct='%1.1f%%')
+            plt.show()
 
     # 建立利润计算DF - 每次都重新计算
     @staticmethod
