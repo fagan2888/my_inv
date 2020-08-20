@@ -30,8 +30,8 @@ my_investment_analysis.data_preparation(excelPath)
 #                                                   datetime.date(2020, 8, 17))
 # print(profit_df)
 
-# # 给定期间内，投资项目利润、利润率柱状图
-# my_investment_analysis.calculate_inv_profit_ratio('2019-03', '2020-08')
+# 给定期间内，投资项目利润、利润率柱状图
+my_investment_analysis.calculate_inv_profit_ratio('2019-05', '2019-05')
 
 # # 股票占比分析
 # investment_item_list = ['50ETF-510050', 'H股ETF-510900', '中欧价值发现混合-166005',
@@ -46,11 +46,12 @@ my_investment_analysis.data_preparation(excelPath)
 # print(df_result)
 
 # 运行我的资产report
-for x in range(0, 6):
-    # my_investment_analysis.line_by_category_total_amount(x)
-    my_investment_analysis.line_profit_by_category(x)
+# for x in range(0, 6):
+#     my_investment_analysis.line_by_category_total_amount(x)
+#     my_investment_analysis.line_profit_by_category(x)
 #
 # for x in range(1, 6):
 #     my_investment_analysis.pie_by_category(x)
+
 
 

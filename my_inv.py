@@ -1,6 +1,8 @@
 # coding:utf-8
 
 # 我的资产分析类定义
+import datetime
+
 import jqdatasdk as jq
 import matplotlib as mpl
 import matplotlib.dates as mdates
@@ -165,7 +167,19 @@ class MyInvestmentAnalysis:
 
     # 给定期间内，投资项目利润、利润率柱状图
     def calculate_inv_profit_ratio(self, start_date, end_date):
-        self.__build_item_profit_df_shadow()
+        df_profit = self.__build_item_profit_df()
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m")
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m")
+        df_selected_profit = df_profit.loc[df_profit['期间'] >= start_date]
+        df_selected_profit = df_selected_profit.loc[df_selected_profit['期间'] <= end_date]
+
+        profit_master_data = self.master_data.iloc[:, 5]
+        profit_master_data = profit_master_data.drop_duplicates()
+        target_df = profit_master_data
+
+        # 填入对应的期初期末金额
+
+        pass
 
     # 建立利润计算DF - 每次都重新计算
     def __build_item_profit_df(self):
