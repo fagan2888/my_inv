@@ -15,7 +15,7 @@ mpl.use('TkAgg')
 
 class MyInvestmentAnalysis:
     def __init__(self):
-        jq.auth('18500150123', 'YanTeng881128')
+        # jq.auth('18500150123', 'YanTeng881128')
         mpl.rcParams[u'font.sans-serif'] = ['SimHei']
         mpl.rcParams['axes.unicode_minus'] = False
 
@@ -57,10 +57,9 @@ class MyInvestmentAnalysis:
         self.master_data = master_data
 
     # 资产总额曲线: 第二个参数：1-一级分类；2-二级分类；3-三级分类；4-四级分类；5-辅助分类; 0-总额（默认）
-    @staticmethod
-    def line_by_category_total_amount(all_category_balance, category_type=0):
+    def line_by_category_total_amount(self, category_type=0):
         if category_type == 1:
-            group_by_period = all_category_balance.groupby(['期间', '一级分类']).sum()
+            group_by_period = self.all_category_balance.groupby(['期间', '一级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
@@ -70,7 +69,7 @@ class MyInvestmentAnalysis:
             group_by_period.plot(marker='o', title='一级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 2:
-            group_by_period = all_category_balance.groupby(['期间', '二级分类']).sum()
+            group_by_period = self.all_category_balance.groupby(['期间', '二级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
@@ -80,7 +79,7 @@ class MyInvestmentAnalysis:
             group_by_period.plot(marker='o', title='二级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 3:
-            group_by_period = all_category_balance.groupby(['期间', '三级分类']).sum()
+            group_by_period = self.all_category_balance.groupby(['期间', '三级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
@@ -90,7 +89,7 @@ class MyInvestmentAnalysis:
             group_by_period.plot(marker='o', title='三级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 4:
-            group_by_period = all_category_balance.groupby(['期间', '四级分类']).sum()
+            group_by_period = self.all_category_balance.groupby(['期间', '四级分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
@@ -100,7 +99,7 @@ class MyInvestmentAnalysis:
             group_by_period.plot(marker='o', title='四级分类资产总额曲线', ax=ax)
             plt.show()
         elif category_type == 5:
-            group_by_period = all_category_balance.groupby(['期间', '辅助分类']).sum()
+            group_by_period = self.all_category_balance.groupby(['期间', '辅助分类']).sum()
             group_by_period = group_by_period.unstack()
             group_by_period.columns = group_by_period.columns.levels[1]
 
@@ -110,7 +109,7 @@ class MyInvestmentAnalysis:
             group_by_period.plot(marker='o', title='辅助分类资产总额曲线', ax=ax)
             plt.show()
         else:
-            group_by_period = all_category_balance.groupby(['期间'])
+            group_by_period = self.all_category_balance.groupby(['期间'])
             df_group_by_period_sum = DataFrame(group_by_period['金额'].sum())
 
             ax = plt.gca()
@@ -122,10 +121,9 @@ class MyInvestmentAnalysis:
             plt.show()
 
     # 最近期间的分类饼状图: 第二个参数：1-一级分类；2-二级分类；3-三级分类；4-四级分类；5-辅助分类(默认);
-    @staticmethod
-    def pie_by_category(all_category_balance, category_type=5):
+    def pie_by_category(self, category_type=5):
         if category_type == 1:
-            fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '一级分类']).sum()
+            fuzhu_category_by_period_balance = self.all_category_balance.groupby(['期间', '一级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
             result_df = fuzhu_category_by_period_balance.iloc[-1].dropna()
@@ -133,7 +131,7 @@ class MyInvestmentAnalysis:
             result_df.plot(kind='pie', title='一级分类饼状图', autopct='%1.1f%%')
             plt.show()
         elif category_type == 2:
-            fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '二级分类']).sum()
+            fuzhu_category_by_period_balance = self.all_category_balance.groupby(['期间', '二级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
@@ -141,7 +139,7 @@ class MyInvestmentAnalysis:
             result_df.plot(kind='pie', title='二级分类饼状图', autopct='%1.1f%%')
             plt.show()
         elif category_type == 3:
-            fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '三级分类']).sum()
+            fuzhu_category_by_period_balance = self.all_category_balance.groupby(['期间', '三级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
@@ -149,7 +147,7 @@ class MyInvestmentAnalysis:
             result_df.plot(kind='pie', title='三级分类饼状图', autopct='%1.1f%%')
             plt.show()
         elif category_type == 4:
-            fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '四级分类']).sum()
+            fuzhu_category_by_period_balance = self.all_category_balance.groupby(['期间', '四级分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
@@ -157,7 +155,7 @@ class MyInvestmentAnalysis:
             result_df.plot(kind='pie', title='四级分类饼状图', autopct='%1.1f%%')
             plt.show()
         else:
-            fuzhu_category_by_period_balance = all_category_balance.groupby(['期间', '辅助分类']).sum()
+            fuzhu_category_by_period_balance = self.all_category_balance.groupby(['期间', '辅助分类']).sum()
             fuzhu_category_by_period_balance = fuzhu_category_by_period_balance.unstack()
             fuzhu_category_by_period_balance.columns = fuzhu_category_by_period_balance.columns.levels[1]
 
@@ -165,8 +163,73 @@ class MyInvestmentAnalysis:
             result_df.plot(kind='pie', title='辅助分类饼状图', autopct='%1.1f%%')
             plt.show()
 
+    # 给定期间内，投资项目利润、利润率柱状图
+    def calculate_inv_profit_ratio(self, start_date, end_date):
+        self.__build_item_profit_df_shadow()
+
     # 建立利润计算DF - 每次都重新计算
-    def build_profit_df(self):
+    def __build_item_profit_df(self):
+        profit_master_data = self.master_data.iloc[:, 0:6]
+        profit_master_data = profit_master_data.drop_duplicates()
+        target_df = profit_master_data
+
+        period_list = self.all_category_balance.loc[:, '期间'].drop_duplicates().tolist()
+        profit_master_data.insert(0, '期间', np.nan)
+
+        # 补全期间
+        for tempPeriod in period_list:
+            profit_df = profit_master_data.fillna(tempPeriod)
+            profit_master_data = pd.concat([profit_df, target_df], axis=0)
+
+        profit_master_data.dropna(inplace=True)
+
+        # 填入对应的期初期末金额
+        period_category_sum = self.all_category_balance.groupby(['期间', '项目名称']).sum()
+        # 填入期初，期末金额
+        profit_master_data.insert(len(profit_master_data.columns), '期末金额', np.nan)
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '期初金额', np.nan)
+
+        current_period = np.nan
+        previous_period = np.nan
+        first_time = True
+        for index, row in period_category_sum.iterrows():
+            if first_time:
+                current_period = index[0]
+                first_time = False
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['项目名称'] == index[1]), '期末金额'] = row['金额']
+
+            if current_period != index[0]:
+                previous_period = current_period
+                current_period = index[0]
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['项目名称'] == index[1]), '期初金额'] = profit_master_data.loc[
+                (profit_master_data['期间'] == previous_period) &
+                (profit_master_data['项目名称'] == index[1]), '期末金额']
+
+        # 填入本期变动
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '本期变动', np.nan)
+        period_category_change_sum = self.all_category_transaction.groupby(['期间', '项目名称']).sum()
+        for index, row in period_category_change_sum.iterrows():
+            profit_master_data.loc[(profit_master_data['期间'] == index[0]) &
+                                   (profit_master_data['项目名称'] == index[1]), '本期变动'] = row['买入／卖出金额']
+
+        profit_master_data.fillna(0, inplace=True)
+
+        # 计算利润及利润率
+        profit_master_data.insert(len(profit_master_data.columns), '本期利润',
+                                  (profit_master_data.loc[:, '期末金额'] - profit_master_data.loc[:, '期初金额'] -
+                                   profit_master_data.loc[:, '本期变动']))
+        profit_master_data.insert(len(profit_master_data.columns), '利润率',
+                                  (profit_master_data.loc[:, '本期利润'] / profit_master_data.loc[:, '期初金额']))
+
+        # 最终整理数据并返回
+        profit_master_data.reset_index(inplace=True, drop=True)
+        profit_df = profit_master_data
+        return profit_df
+
+    # 建立利润计算DF - 每次都重新计算
+    def __build_profit_df(self):
         # 整理masterData，保留利润有意义的部分四级分类：
         # '可转债基金','A股-大股票指数'，'A股-小股票指数','A股-主题指数','成熟市场指数','主动股票基金',
         profit_list = ['可转债基金', 'A股-大股票指数', 'A股-小股票指数',
@@ -234,8 +297,8 @@ class MyInvestmentAnalysis:
         return profit_df
 
     # 分类利润率曲线: 第二个参数：1-一级分类；2-二级分类；3-三级分类；4-四级分类；5-辅助分类; 0-总额（默认）
-    @staticmethod
-    def line_profit_by_category(build_profit_df, category_type=0):
+    def line_profit_by_category(self, category_type=0):
+        build_profit_df = self.__build_profit_df()
         if category_type == 1:
             profit_by_category = build_profit_df.groupby(['期间', '一级分类']).sum()
             profit_by_category.loc[:, '利润率'] = profit_by_category.loc[:, '本期利润'] / profit_by_category.loc[:, '期初金额']
@@ -304,19 +367,15 @@ class MyInvestmentAnalysis:
 
             # 返回选定的项目名称按期间余额
 
-    # 给定期间内，投资项目利润、利润率柱状图
-    def calculate_inv_item_profit_ratio(self, all_category_balance, all_category_transaction, master_data):
-        pass
-
-    @staticmethod
-    def __build_investment_item_df(all_category_balance, investment_item_list):
-        investment_item_df = all_category_balance.loc[all_category_balance.loc[:, '项目名称'].isin(investment_item_list)]
+    def __build_investment_item_df(self, investment_item_list):
+        investment_item_df = self.all_category_balance.loc[
+            self.all_category_balance.loc[:, '项目名称'].isin(investment_item_list)]
         investment_item_df.reset_index(inplace=True, drop=True)
         return investment_item_df
 
     # 打印选定投资项目范围饼状图
-    @staticmethod
-    def pie_by_given_investment_item(investment_item_df):
+    def pie_by_given_investment_item(self, investment_item_list):
+        investment_item_df = self.__build_investment_item_df(investment_item_list)
         last_period_investment_item_df = \
             investment_item_df.loc[investment_item_df.loc[:, '期间']
                                    == investment_item_df.iloc[-1].loc['期间']].loc[:, ['项目名称', '金额']]
