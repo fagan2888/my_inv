@@ -166,7 +166,7 @@ class MyInvestmentAnalysis:
             plt.show()
 
     # 给定期间内，投资项目利润、利润率柱状图
-    def calculate_inv_profit_ratio(self, start_date, end_date):
+    def calculate_inv_profit_ratio(self, start_date, end_date, profit_calculate_stock_list=None):
         df_profit = self.__build_item_profit_df()
         start_date = datetime.datetime.strptime(start_date, "%Y-%m")
         end_date = datetime.datetime.strptime(end_date, "%Y-%m")
@@ -201,6 +201,15 @@ class MyInvestmentAnalysis:
         # 最终整理数据并返回
         profit_master_data.reset_index(inplace=True, drop=True)
         profit_df = profit_master_data
+        profit_df.set_index(["项目名称"], inplace=True)
+        profit_df = profit_df.loc[:, '本期利润':'利润率']
+        if profit_calculate_stock_list is not None:
+            profit_df = profit_df.loc[profit_calculate_stock_list, :]
+
+        profit_df = profit_df.sort_values('利润率', ascending=False)
+        profit_df.plot(kind='bar', title='给定期间利润')
+        plt.show()
+
         return profit_df
 
     # 建立利润计算DF - 每次都重新计算

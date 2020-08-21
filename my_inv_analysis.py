@@ -9,7 +9,6 @@ excelPath = './res/资产明细表_202007.xlsx'
 my_investment_analysis = my_inv.MyInvestmentAnalysis()
 my_investment_analysis.data_preparation(excelPath)
 
-
 # # 分析目前比较基准已经有的涨幅
 # jq.auth('18500150123', 'YanTeng881128')
 # profit_calculate_stock_dict = {'沪深300': '000300.XSHG',
@@ -31,7 +30,29 @@ my_investment_analysis.data_preparation(excelPath)
 # print(profit_df)
 
 # 给定期间内，投资项目利润、利润率柱状图
-# my_investment_analysis.calculate_inv_profit_ratio('2019-07', '2019-10')
+profit_calculate_stock_list = ['易方达安心回报债券A-110027',
+                               '兴全可转债混合-340001',
+                               'H股ETF-510900',
+                               '50ETF-510050',
+                               '申万沪深300增强-310318',
+                               '富国中证红利-100032',
+                               '创业板100-159915',
+                               '建信/富国中证500指数增强/天弘500增强私募 - 000478/161017',
+                               '传媒ETF-512980',
+                               '广发中证养老-000968',
+                               '广发中证医药-001180',
+                               '广发中证环保-001064',
+                               '易方达证券公司指数分级-502010',
+                               '易方达消费行业股票-110022',
+                               '广发中证全指金融地产-001469',
+                               '恒生ETF-159920',
+                               '德国30-513030/000614',
+                               'SAP德国股票-OwnSAP',
+                               '汇添富价值精选混合-519069',
+                               '中欧价值发现混合-166005',
+                               '华宝油气-162411']
+df_result = my_investment_analysis.calculate_inv_profit_ratio('2020-07', '2020-07', profit_calculate_stock_list)
+print(df_result)
 
 # # 股票占比分析
 # investment_item_list = ['50ETF-510050', 'H股ETF-510900', '中欧价值发现混合-166005',
@@ -45,13 +66,10 @@ my_investment_analysis.data_preparation(excelPath)
 # df_result = my_investment_analysis.pie_by_given_investment_item(investment_item_list)
 # print(df_result)
 
-# 运行我的资产report
-for x in range(0, 6):
-    my_investment_analysis.line_by_category_total_amount(x)
-    my_investment_analysis.line_profit_by_category(x)
-
-for x in range(1, 6):
-    my_investment_analysis.pie_by_category(x)
-
-
-
+# # 运行我的资产report
+# for x in range(0, 6):
+#     my_investment_analysis.line_by_category_total_amount(x)
+#     my_investment_analysis.line_profit_by_category(x)
+#
+# for x in range(1, 6):
+#     my_investment_analysis.pie_by_category(x)
