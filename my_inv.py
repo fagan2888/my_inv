@@ -173,13 +173,35 @@ class MyInvestmentAnalysis:
         df_selected_profit = df_profit.loc[df_profit['期间'] >= start_date]
         df_selected_profit = df_selected_profit.loc[df_selected_profit['期间'] <= end_date]
 
-        profit_master_data = self.master_data.iloc[:, 5]
+        profit_master_data = DataFrame(self.master_data.iloc[:, 5])
         profit_master_data = profit_master_data.drop_duplicates()
-        target_df = profit_master_data
 
         # 填入对应的期初期末金额
+        profit_master_data.insert(len(profit_master_data.columns), '期末金额', np.nan)
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '期初金额', np.nan)
+        # 期初金额
+        for index, row in df_selected_profit.loc[df_selected_profit['期间'] == df_selected_profit.iloc[0, 0]].iterrows():
+            profit_master_data.loc[profit_master_data['项目名称'] == row['项目名称'], '期初金额'] = row['期初金额']
+        # 期末金额
+        for index, row in df_selected_profit.loc[df_selected_profit['期间'] == df_selected_profit.iloc[-1, 0]].iterrows():
+            profit_master_data.loc[profit_master_data['项目名称'] == row['项目名称'], '期末金额'] = row['期末金额']
 
-        pass
+        # 填入本期变动
+        profit_master_data.insert(len(profit_master_data.columns) - 1, '本期变动', np.nan)
+        period_change_sum = df_selected_profit.groupby(['项目名称']).sum()
+        for index, row in period_change_sum.iterrows():
+            profit_master_data.loc[profit_master_data['项目名称'] == index, '本期变动'] = row['本期变动']
+        # 计算利润及利润率
+        profit_master_data.insert(len(profit_master_data.columns), '本期利润',
+                                  (profit_master_data.loc[:, '期末金额'] - profit_master_data.loc[:, '期初金额'] -
+                                   profit_master_data.loc[:, '本期变动']))
+        profit_master_data.insert(len(profit_master_data.columns), '利润率',
+                                  (profit_master_data.loc[:, '本期利润'] / profit_master_data.loc[:, '期初金额']))
+
+        # 最终整理数据并返回
+        profit_master_data.reset_index(inplace=True, drop=True)
+        profit_df = profit_master_data
+        return profit_df
 
     # 建立利润计算DF - 每次都重新计算
     def __build_item_profit_df(self):
