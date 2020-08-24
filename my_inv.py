@@ -208,6 +208,7 @@ class MyInvestmentAnalysis:
 
         profit_df = profit_df.sort_values('利润率', ascending=False)
         profit_df.plot(kind='bar', title='给定期间利润')
+        plt.xticks(rotation=45)
         plt.show()
 
         return profit_df
