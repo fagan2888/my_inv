@@ -53,6 +53,8 @@ profit_calculate_stock_list = ['易方达安心回报债券A-110027',
                                '华宝油气-162411']
 df_result = my_investment_analysis.calculate_inv_profit_ratio('2020-07', '2020-07', profit_calculate_stock_list)
 print(df_result)
+# df_result.to_excel("./res/temp.xlsx")
+
 
 # # 股票占比分析
 # investment_item_list = ['50ETF-510050', 'H股ETF-510900', '中欧价值发现混合-166005',

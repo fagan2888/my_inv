@@ -207,8 +207,8 @@ class MyInvestmentAnalysis:
             profit_df = profit_df.loc[profit_calculate_stock_list, :]
 
         profit_df = profit_df.sort_values('利润率', ascending=False)
-        profit_df.plot(kind='bar', title='给定期间利润')
-        plt.xticks(rotation=45)
+        profit_df.plot(kind='bar', title='从' + str(start_date) + '至' + str(end_date) + '利润利润率', subplots=True, rot=80,
+                       fontsize=7, align='center', alpha=0.8)
         plt.show()
 
         return profit_df
